@@ -14,8 +14,10 @@ final class TeleprompterViewModel: ObservableObject {
     @Published var scrollAnimationDuration: Double = 0.18
     @Published var windowOpacity: Double = 1.0
     @Published var micLevel: Float = 0
+    @Published var isExpanded: Bool = false
+    @Published var isHovering: Bool = false
 
-    let fontSize: CGFloat = 28
+    let fontSize: CGFloat = 22
 
     static let defaultScript = """
 So, this is Hyprnote.

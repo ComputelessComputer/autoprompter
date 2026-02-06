@@ -18,10 +18,8 @@ struct TeleprompterTextView: NSViewRepresentable {
         textView.isSelectable = true
         textView.drawsBackground = false
         textView.font = NSFont.systemFont(ofSize: fontSize, weight: .regular)
-        // labelColor automatically flips white↔black based on the
-        // effective appearance (dark vs light background).
-        textView.textColor = NSColor.labelColor
-        textView.insertionPointColor = NSColor.labelColor
+        textView.textColor = NSColor.white
+        textView.insertionPointColor = NSColor.white
         textView.textContainerInset = NSSize(width: 8, height: 10)
         textView.delegate = context.coordinator
         textView.string = text
