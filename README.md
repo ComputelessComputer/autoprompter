@@ -32,6 +32,12 @@ Paste your script, hit play, and start speaking. Words light up as you say them.
 
 **[Download the latest .dmg from Releases](https://github.com/f/textream/releases/latest)**
 
+Or install with Homebrew:
+
+```bash
+brew install f/textream/textream
+```
+
 > Requires **macOS 14 Sonoma** or later. Works on Apple Silicon and Intel.
 
 ### First launch
