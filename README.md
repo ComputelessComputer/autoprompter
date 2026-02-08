@@ -16,6 +16,10 @@
   <a href="#download">Download</a> · <a href="#features">Features</a> · <a href="#how-it-works">How It Works</a> · <a href="#building-from-source">Build</a>
 </p>
 
+<p align="center">
+  <video src="https://github.com/f/textream/raw/main/docs/video.mp4" width="600" autoplay loop muted playsinline></video>
+</p>
+
 ---
 
 ## What is Textream?
