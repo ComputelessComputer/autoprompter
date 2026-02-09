@@ -39,6 +39,7 @@ class SpeechRecognizer {
     private let maxRetries: Int = 10
     private var configurationChangeObserver: Any?
     private var pendingRestart: DispatchWorkItem?
+    private var sessionGeneration: Int = 0
 
     /// Jump highlight to a specific char offset (e.g. when user taps a word)
     func jumpTo(charOffset: Int) {
@@ -64,6 +65,7 @@ class SpeechRecognizer {
         matchStartOffset = 0
         retryCount = 0
         error = nil
+        sessionGeneration += 1
 
         // Check microphone permission first
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
@@ -236,11 +238,14 @@ class SpeechRecognizer {
             }
         }
 
+        let currentGeneration = sessionGeneration
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
             guard let self else { return }
             if let result {
                 let spoken = result.bestTranscription.formattedString
                 DispatchQueue.main.async {
+                    // Ignore stale results from a previous session
+                    guard self.sessionGeneration == currentGeneration else { return }
                     self.retryCount = 0 // Reset on success
                     self.lastSpokenText = spoken
                     self.matchCharacters(spoken: spoken)

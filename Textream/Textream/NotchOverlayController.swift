@@ -102,7 +102,11 @@ class NotchOverlayController: NSObject {
             .split(omittingEmptySubsequences: true, whereSeparator: { $0.isWhitespace })
             .map { String($0) }
 
+        // Fully reset speech state for new page
         speechRecognizer.recognizedCharCount = 0
+        speechRecognizer.shouldDismiss = false
+        speechRecognizer.shouldAdvancePage = false
+        speechRecognizer.lastSpokenText = ""
 
         overlayContent.words = normalized
         overlayContent.totalCharCount = normalized.joined(separator: " ").count

@@ -67,7 +67,12 @@ struct SpeechScrollView: View {
                 }
             )
             .onPreferenceChange(WordYPreferenceKey.self) { positions in
+                let wasEmpty = wordYPositions.isEmpty
                 wordYPositions = positions
+                // After a page switch, wordYPositions was cleared — recenter once new positions arrive
+                if wasEmpty && !positions.isEmpty {
+                    recalcCenter(containerHeight: containerHeight)
+                }
             }
             .offset(y: scrollOffset + manualOffset)
             .animation(smoothScroll ? .linear(duration: 0.06) : .easeOut(duration: 0.5), value: scrollOffset)
@@ -95,6 +100,11 @@ struct SpeechScrollView: View {
                     manualOffset = 0
                     recalcCenter(containerHeight: containerHeight)
                 }
+            }
+            .onChange(of: words) { _, _ in
+                scrollOffset = 0
+                manualOffset = 0
+                wordYPositions = [:]
             }
             .onAppear {
                 containerHeight = geo.size.height
