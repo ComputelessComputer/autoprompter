@@ -77,6 +77,11 @@ Then right-click the app → **Open**. After the first launch, macOS remembers y
 - **Scroll speed** — Adjustable words-per-second for Classic and Voice-Activated modes (0.5–8 w/s).
 - **Language selection** — Choose your preferred speech recognition language for Word Tracking mode.
 
+### File Support
+
+- **PowerPoint notes import** — Drop a .pptx file to extract presenter notes as pages. For Keynote or Google Slides, export to PowerPoint first and Textream will handle the rest.
+- **Save as .textream files** — Save your scripts as .textream files to reuse anytime. Keep your notes organized across presentations.
+
 ### Other
 
 - **Live waveform** — Visual voice activity indicator so you always know the mic is picking you up.
@@ -135,6 +140,7 @@ Textream/
     ├── NotchSettings.swift            # User preferences and presets
     ├── SettingsView.swift             # Tabbed settings UI
     ├── MarqueeTextView.swift          # Word flow layout and highlighting
+    ├── PresentationNotesExtractor.swift # PPTX presenter notes extraction
     ├── UpdateChecker.swift            # GitHub release update checker
     └── Assets.xcassets/               # App icon and colors
 ```

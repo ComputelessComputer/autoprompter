@@ -112,10 +112,12 @@ enum PresentationNotesExtractor {
 
 private class PPTXNoteXMLParser: NSObject, XMLParserDelegate {
     private let data: Data
-    private var texts: [String] = []
+    private var paragraphs: [String] = []
+    private var currentParagraph = ""
     private var currentText = ""
     private var insideBody = false
     private var insideTextRun = false
+    private var insideParagraph = false
     private var skipPlaceholder = false
     private var currentPlaceholderType: String?
 
@@ -127,15 +129,13 @@ private class PPTXNoteXMLParser: NSObject, XMLParserDelegate {
         let parser = XMLParser(data: data)
         parser.delegate = self
         parser.parse()
-        return texts.joined(separator: "\n")
+        return paragraphs.joined(separator: "\n")
     }
 
     func parser(_ parser: XMLParser, didStartElement elementName: String,
                 namespaceURI: String?, qualifiedName: String?,
                 attributes: [String: String]) {
-        // Track if we're inside the notes body (p:txBody inside p:sp that has notes placeholder)
         if elementName.hasSuffix(":sp") || elementName == "sp" {
-            // Check placeholder type in child elements
             skipPlaceholder = false
             currentPlaceholderType = nil
         }
@@ -143,7 +143,6 @@ private class PPTXNoteXMLParser: NSObject, XMLParserDelegate {
         if elementName.hasSuffix(":ph") || elementName == "ph" {
             let type = attributes["type"] ?? ""
             currentPlaceholderType = type
-            // Skip slide number placeholders (type="sldNum") and slide image placeholders (type="sldImg")
             if type == "sldNum" || type == "sldImg" || type == "dt" || type == "hdr" || type == "ftr" {
                 skipPlaceholder = true
             }
@@ -153,14 +152,20 @@ private class PPTXNoteXMLParser: NSObject, XMLParserDelegate {
             insideBody = true
         }
 
-        if (elementName.hasSuffix(":t") || elementName == "t") && insideBody && !skipPlaceholder {
+        // Start of a paragraph
+        if (elementName.hasSuffix(":p") || elementName == "p") && insideBody && !skipPlaceholder {
+            insideParagraph = true
+            currentParagraph = ""
+        }
+
+        if (elementName.hasSuffix(":t") || elementName == "t") && insideParagraph {
             insideTextRun = true
             currentText = ""
         }
 
-        // Handle line breaks
-        if (elementName.hasSuffix(":br") || elementName == "br") && insideBody && !skipPlaceholder {
-            texts.append("")
+        // Handle line breaks within a paragraph
+        if (elementName.hasSuffix(":br") || elementName == "br") && insideParagraph {
+            currentParagraph += "\n"
         }
     }
 
@@ -174,7 +179,13 @@ private class PPTXNoteXMLParser: NSObject, XMLParserDelegate {
                 namespaceURI: String?, qualifiedName: String?) {
         if (elementName.hasSuffix(":t") || elementName == "t") && insideTextRun {
             insideTextRun = false
-            texts.append(currentText)
+            currentParagraph += currentText
+        }
+
+        // End of a paragraph — flush it
+        if (elementName.hasSuffix(":p") || elementName == "p") && insideParagraph {
+            insideParagraph = false
+            paragraphs.append(currentParagraph)
         }
 
         if elementName.hasSuffix(":txBody") || elementName == "txBody" {
