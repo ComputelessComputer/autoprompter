@@ -220,7 +220,7 @@ class NotchOverlayController: NSObject {
         panel.level = .screenSaver
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         panel.ignoresMouseEvents = false
-        panel.sharingType = .none
+        panel.sharingType = NotchSettings.shared.hideFromScreenShare ? .none : .readOnly
         panel.contentView = contentView
 
         panel.orderFrontRegardless()
@@ -261,7 +261,7 @@ class NotchOverlayController: NSObject {
         panel.level = .screenSaver
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.ignoresMouseEvents = true
-        panel.sharingType = .none
+        panel.sharingType = NotchSettings.shared.hideFromScreenShare ? .none : .readOnly
         panel.contentView = contentView
 
         panel.orderFrontRegardless()
@@ -298,7 +298,7 @@ class NotchOverlayController: NSObject {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.ignoresMouseEvents = false
         panel.isMovableByWindowBackground = true
-        panel.sharingType = .none
+        panel.sharingType = NotchSettings.shared.hideFromScreenShare ? .none : .readOnly
         panel.contentView = contentView
 
         panel.orderFrontRegardless()

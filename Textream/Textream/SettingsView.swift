@@ -665,6 +665,19 @@ struct SettingsView: View {
 
     private var externalDisplayTab: some View {
         VStack(alignment: .leading, spacing: 14) {
+            Toggle(isOn: $settings.hideFromScreenShare) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Do not show on screen shares")
+                        .font(.system(size: 13, weight: .medium))
+                    Text("Hide the overlay from screen recordings and video calls.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(.checkbox)
+
+            Divider()
+
             Text("External Display")
                 .font(.system(size: 13, weight: .medium))
 

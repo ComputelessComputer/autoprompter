@@ -336,6 +336,10 @@ class NotchSettings {
         didSet { UserDefaults.standard.set(scrollSpeed, forKey: "scrollSpeed") }
     }
 
+    var hideFromScreenShare: Bool {
+        didSet { UserDefaults.standard.set(hideFromScreenShare, forKey: "hideFromScreenShare") }
+    }
+
     var font: NSFont {
         fontFamilyPreset.font(size: fontSizePreset.pointSize)
     }
@@ -373,5 +377,6 @@ class NotchSettings {
         self.listeningMode = ListeningMode(rawValue: UserDefaults.standard.string(forKey: "listeningMode") ?? "") ?? .wordTracking
         let savedSpeed = UserDefaults.standard.double(forKey: "scrollSpeed")
         self.scrollSpeed = savedSpeed > 0 ? savedSpeed : 3
+        self.hideFromScreenShare = UserDefaults.standard.object(forKey: "hideFromScreenShare") as? Bool ?? true
     }
 }
