@@ -112,6 +112,17 @@ Then right-click the app → **Open**. After the first launch, macOS remembers y
 - **Target display** — Pick from connected external displays and Sidecar iPads.
 - **Hide from screen share** — Hides the overlay from screen recordings and video calls.
 
+### Remote Connection
+
+View your teleprompter on **any device** — phone, tablet, or another computer — via a local network browser connection.
+
+- **Enable in Settings → Remote** — Starts a lightweight HTTP + WebSocket server on your Mac.
+- **QR code** — Scan the generated QR code from your phone or tablet to open the teleprompter instantly.
+- **Real-time sync** — Words highlight, waveform animates, and progress updates in real time over WebSocket.
+- **No app needed** — Works in any modern browser. No installation required on the remote device.
+- **Configurable port** — Default port 7373, adjustable in advanced settings.
+- **Fully local** — All traffic stays on your local network. Nothing leaves your Wi-Fi.
+
 ### File Support
 
 - **PowerPoint notes import** — Drop a .pptx file to extract presenter notes as pages. For Keynote or Google Slides, export to PowerPoint first.
@@ -177,6 +188,7 @@ Textream/
     ├── NotchSettings.swift            # User preferences and presets
     ├── SettingsView.swift             # Tabbed settings UI
     ├── MarqueeTextView.swift          # Word flow layout and highlighting
+    ├── BrowserServer.swift            # Remote connection HTTP + WebSocket server
     ├── PresentationNotesExtractor.swift # PPTX presenter notes extraction
     ├── UpdateChecker.swift            # GitHub release update checker
     └── Assets.xcassets/               # App icon and colors
