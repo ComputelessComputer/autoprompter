@@ -8,6 +8,8 @@
 
 /* Begin PBXFileReference section */
 		446966B42F37E47300AF141F /* Textream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Textream.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4E471242CDFAEE943E1322D /* DeepgramStreamer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepgramStreamer.swift; sourceTree = "<group>"; };
+		6888BA6E74C6ADDCD89DB08F /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -119,6 +121,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39B02A486E2B003D8264F531 /* DeepgramStreamer.swift in Sources */,
+				C3DC7A1CC6B9AFE3F5A035C4 /* KeychainStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

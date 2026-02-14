@@ -606,6 +606,44 @@ struct SettingsView: View {
 
     private var guidanceTab: some View {
         VStack(alignment: .leading, spacing: 14) {
+            // Speech Backend
+            Text("Speech Backend")
+                .font(.system(size: 13, weight: .medium))
+
+            Picker("", selection: $settings.speechBackend) {
+                ForEach(SpeechBackend.allCases) { backend in
+                    Text(backend.label).tag(backend)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+
+            Text(settings.speechBackend.description)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            if settings.speechBackend == .deepgram {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("API Key")
+                        .font(.system(size: 13, weight: .medium))
+                    HStack(spacing: 8) {
+                        SecureField("Paste your Deepgram API key", text: Binding(
+                            get: { settings.deepgramAPIKey },
+                            set: { settings.deepgramAPIKey = $0 }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        if !settings.deepgramAPIKey.isEmpty {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                    }
+                    Link("Get a free API key", destination: URL(string: "https://console.deepgram.com")!)
+                        .font(.system(size: 11))
+                }
+            }
+
+            Divider()
+
             Picker("", selection: $settings.listeningMode) {
                 ForEach(ListeningMode.allCases) { mode in
                     Text(mode.label).tag(mode)
@@ -1128,6 +1166,7 @@ struct SettingsView: View {
     // MARK: - Helpers
 
     private func resetAllSettings() {
+        settings.speechBackend = .apple
         settings.notchWidth = NotchSettings.defaultWidth
         settings.textAreaHeight = NotchSettings.defaultHeight
         settings.fontSizePreset = .lg

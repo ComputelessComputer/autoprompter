@@ -276,11 +276,44 @@ enum ListeningMode: String, CaseIterable, Identifiable {
     }
 }
 
+// MARK: - Speech Backend
+
+enum SpeechBackend: String, CaseIterable, Identifiable {
+    case apple, deepgram
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .apple:    return "Apple (On-Device)"
+        case .deepgram: return "Deepgram (Cloud)"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .apple:    return "Free, works offline. Uses Apple's built-in speech recognition."
+        case .deepgram: return "More accurate, requires API key. Uses Deepgram's cloud API."
+        }
+    }
+}
+
 // MARK: - Settings
 
 @Observable
 class NotchSettings {
     static let shared = NotchSettings()
+
+    private let deepgramKeychain = KeychainStore(service: "Textream", account: "DeepgramAPIKey")
+
+    var speechBackend: SpeechBackend {
+        didSet { UserDefaults.standard.set(speechBackend.rawValue, forKey: "speechBackend") }
+    }
+
+    var deepgramAPIKey: String {
+        get { deepgramKeychain.read() ?? "" }
+        set { deepgramKeychain.save(newValue) }
+    }
 
     var notchWidth: CGFloat {
         didSet { UserDefaults.standard.set(Double(notchWidth), forKey: "notchWidth") }
@@ -399,6 +432,7 @@ class NotchSettings {
     static let maxHeight: CGFloat = 400
 
     init() {
+        self.speechBackend = SpeechBackend(rawValue: UserDefaults.standard.string(forKey: "speechBackend") ?? "") ?? .apple
         let savedWidth = UserDefaults.standard.double(forKey: "notchWidth")
         let savedHeight = UserDefaults.standard.double(forKey: "textAreaHeight")
         self.notchWidth = savedWidth > 0 ? CGFloat(savedWidth) : Self.defaultWidth

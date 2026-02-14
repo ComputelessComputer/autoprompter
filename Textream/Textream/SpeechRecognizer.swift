@@ -101,6 +101,7 @@ class SpeechRecognizer {
     private var pendingRestart: DispatchWorkItem?
     private var sessionGeneration: Int = 0
     private var suppressConfigChange: Bool = false
+    private var deepgramStreamer: DeepgramStreamer?
 
     /// Jump highlight to a specific char offset (e.g. when user taps a word)
     func jumpTo(charOffset: Int) {
@@ -127,7 +128,18 @@ class SpeechRecognizer {
         error = nil
         sessionGeneration += 1
 
-        // Check microphone permission first
+        let settings = NotchSettings.shared
+        if settings.speechBackend == .deepgram {
+            let apiKey = settings.deepgramAPIKey
+            guard !apiKey.isEmpty else {
+                error = "Deepgram API key not set. Open Settings → Guidance to add your key."
+                return
+            }
+            beginDeepgramRecognition(apiKey: apiKey)
+            return
+        }
+
+        // Apple backend: check microphone permission first
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .denied, .restricted:
             error = "Microphone access denied. Open System Settings → Privacy & Security → Microphone to allow Textream."
@@ -195,13 +207,24 @@ class SpeechRecognizer {
         retryCount = 0
         matchStartOffset = recognizedCharCount
         shouldDismiss = false
-        beginRecognition()
+        let settings = NotchSettings.shared
+        if settings.speechBackend == .deepgram {
+            let apiKey = settings.deepgramAPIKey
+            guard !apiKey.isEmpty else { return }
+            beginDeepgramRecognition(apiKey: apiKey)
+        } else {
+            beginRecognition()
+        }
     }
 
     private func cleanupRecognition() {
         // Cancel any pending restart to prevent overlapping beginRecognition calls
         pendingRestart?.cancel()
         pendingRestart = nil
+
+        // Clean up Deepgram streamer if active
+        deepgramStreamer?.stop()
+        deepgramStreamer = nil
 
         if let observer = configurationChangeObserver {
             NotificationCenter.default.removeObserver(observer)
@@ -375,6 +398,50 @@ class SpeechRecognizer {
         // Longer delay to let the audio system fully settle after a device change
         cleanupRecognition()
         scheduleBeginRecognition(after: 0.5)
+    }
+
+    // MARK: - Deepgram backend
+
+    private func beginDeepgramRecognition(apiKey: String) {
+        cleanupRecognition()
+
+        let streamer = DeepgramStreamer(
+            apiKey: apiKey,
+            onStatus: { [weak self] status in
+                DispatchQueue.main.async {
+                    if status.contains("error") || status.contains("Error") {
+                        self?.error = status
+                    }
+                }
+            },
+            onWords: { [weak self] words in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    let transcript = words.map { $0.word }.joined(separator: " ")
+                    self.lastSpokenText = transcript
+                }
+            },
+            onUtterance: { [weak self] utterance in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.lastSpokenText = utterance
+                    self.matchCharacters(spoken: utterance)
+                }
+            },
+            onLevel: { [weak self] level in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    let scaled = CGFloat(min(level * 5, 1.0))
+                    self.audioLevels.append(scaled)
+                    if self.audioLevels.count > 30 {
+                        self.audioLevels.removeFirst()
+                    }
+                }
+            }
+        )
+        deepgramStreamer = streamer
+        streamer.start()
+        isListening = true
     }
 
     // MARK: - Fuzzy character-level matching
