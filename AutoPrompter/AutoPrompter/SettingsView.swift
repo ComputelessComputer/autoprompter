@@ -605,6 +605,7 @@ struct SettingsView: View {
     // MARK: - Guidance Tab
 
     private var guidanceTab: some View {
+        ScrollView(.vertical, showsIndicators: false) {
         VStack(alignment: .leading, spacing: 14) {
             // Speech Backend
             Text("Speech Backend")
@@ -638,6 +639,41 @@ struct SettingsView: View {
                         }
                     }
                     Link("Get a free API key", destination: URL(string: "https://console.deepgram.com")!)
+                        .font(.system(size: 11))
+                }
+            }
+
+            Divider()
+
+            // LLM Resync
+            Toggle(isOn: $settings.llmResyncEnabled) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Smart Resync")
+                        .font(.system(size: 13, weight: .medium))
+                    Text("Uses AI to re-sync the teleprompter when you paraphrase or go off-script.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+
+            if settings.llmResyncEnabled {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("OpenAI API Key")
+                        .font(.system(size: 13, weight: .medium))
+                    HStack(spacing: 8) {
+                        SecureField("Paste your OpenAI API key", text: Binding(
+                            get: { settings.openaiAPIKey },
+                            set: { settings.openaiAPIKey = $0 }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        if !settings.openaiAPIKey.isEmpty {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        }
+                    }
+                    Link("Get an API key", destination: URL(string: "https://platform.openai.com/api-keys")!)
                         .font(.system(size: 11))
                 }
             }
@@ -720,6 +756,7 @@ struct SettingsView: View {
             Spacer()
         }
         .padding(16)
+        }
         .onAppear { availableMics = AudioInputDevice.allInputDevices() }
     }
 
@@ -1190,6 +1227,7 @@ struct SettingsView: View {
         settings.autoNextPageDelay = 3
         settings.browserServerEnabled = false
         settings.browserServerPort = 7373
+        settings.llmResyncEnabled = false
     }
 
     private func refreshScreens() {

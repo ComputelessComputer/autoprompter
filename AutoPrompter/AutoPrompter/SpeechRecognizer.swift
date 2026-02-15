@@ -103,6 +103,14 @@ class SpeechRecognizer {
     private var suppressConfigChange: Bool = false
     private var deepgramStreamer: DeepgramStreamer?
 
+    // LLM resync state
+    private var resyncTimer: Timer?
+    private var lastResyncTime: Date = .distantPast
+    private var spokenForResync: String = ""
+    private var lastAppleSpokenLength: Int = 0
+    private var wasSpeakingLastCheck: Bool = false
+    private static let resyncCooldown: TimeInterval = 3         // min seconds between resyncs
+
     /// Jump highlight to a specific char offset (e.g. when user taps a word)
     func jumpTo(charOffset: Int) {
         recognizedCharCount = charOffset
@@ -127,6 +135,13 @@ class SpeechRecognizer {
         retryCount = 0
         error = nil
         sessionGeneration += 1
+
+        // Reset resync state for new session
+        spokenForResync = ""
+        lastAppleSpokenLength = 0
+        wasSpeakingLastCheck = false
+        lastResyncTime = .distantPast
+        startResyncTimer()
 
         let settings = NotchSettings.shared
         if settings.speechBackend == .deepgram {
@@ -194,6 +209,7 @@ class SpeechRecognizer {
     func stop() {
         isListening = false
         cleanupRecognition()
+        stopResyncTimer()
     }
 
     func forceStop() {
@@ -201,6 +217,7 @@ class SpeechRecognizer {
         sourceText = ""
         retryCount = maxRetries
         cleanupRecognition()
+        stopResyncTimer()
     }
 
     func resume() {
@@ -447,6 +464,22 @@ class SpeechRecognizer {
     // MARK: - Fuzzy character-level matching
 
     private func matchCharacters(spoken: String) {
+        // Accumulate spoken text for LLM resync
+        let isCumulative = NotchSettings.shared.speechBackend == .apple
+        if isCumulative {
+            if spoken.count > lastAppleSpokenLength {
+                let delta = String(spoken.dropFirst(lastAppleSpokenLength))
+                spokenForResync += " " + delta
+                lastAppleSpokenLength = spoken.count
+            }
+        } else {
+            spokenForResync += " " + spoken
+        }
+        // Cap the buffer
+        if spokenForResync.count > 2000 {
+            spokenForResync = String(spokenForResync.suffix(1500))
+        }
+
         // Strategy 1: character-level fuzzy match from the start offset
         let charResult = charLevelMatch(spoken: spoken)
 
@@ -659,5 +692,57 @@ class SpeechRecognizer {
     private static func normalize(_ text: String) -> String {
         text.lowercased()
             .filter { $0.isLetter || $0.isNumber || $0.isWhitespace }
+    }
+
+    // MARK: - LLM Resync
+
+    private func startResyncTimer() {
+        stopResyncTimer()
+        resyncTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            self?.checkForResync()
+        }
+    }
+
+    private func stopResyncTimer() {
+        resyncTimer?.invalidate()
+        resyncTimer = nil
+    }
+
+    private func checkForResync() {
+        let currentlySpeaking = isSpeaking
+        defer { wasSpeakingLastCheck = currentlySpeaking }
+
+        // Trigger on speaking → silent transition (a pause)
+        guard wasSpeakingLastCheck, !currentlySpeaking else { return }
+
+        let settings = NotchSettings.shared
+        guard settings.llmResyncEnabled,
+              !settings.openaiAPIKey.isEmpty,
+              isListening,
+              !sourceText.isEmpty,
+              !spokenForResync.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return }
+
+        let now = Date()
+        guard now.timeIntervalSince(lastResyncTime) >= Self.resyncCooldown else { return }
+
+        lastResyncTime = now
+
+        LLMResyncService.shared.resync(
+            sourceText: sourceText,
+            currentOffset: recognizedCharCount,
+            spokenText: spokenForResync,
+            apiKey: settings.openaiAPIKey
+        ) { [weak self] result in
+            guard let self, let result else { return }
+            // Only jump forward (or stay) — never go backward
+            if result.charOffset > self.recognizedCharCount {
+                self.recognizedCharCount = min(result.charOffset, self.sourceText.count)
+                self.matchStartOffset = self.recognizedCharCount
+                // Reset spoken buffer so next pause uses fresh context
+                self.lastAppleSpokenLength = 0
+                self.spokenForResync = ""
+            }
+        }
     }
 }

@@ -305,6 +305,7 @@ class NotchSettings {
     static let shared = NotchSettings()
 
     private let deepgramKeychain = KeychainStore(service: "AutoPrompter", account: "DeepgramAPIKey")
+    private let openaiKeychain = KeychainStore(service: "AutoPrompter", account: "OpenAIAPIKey")
 
     var speechBackend: SpeechBackend {
         didSet { UserDefaults.standard.set(speechBackend.rawValue, forKey: "speechBackend") }
@@ -313,6 +314,15 @@ class NotchSettings {
     var deepgramAPIKey: String {
         get { deepgramKeychain.read() ?? "" }
         set { deepgramKeychain.save(newValue) }
+    }
+
+    var openaiAPIKey: String {
+        get { openaiKeychain.read() ?? "" }
+        set { openaiKeychain.save(newValue) }
+    }
+
+    var llmResyncEnabled: Bool {
+        didSet { UserDefaults.standard.set(llmResyncEnabled, forKey: "llmResyncEnabled") }
     }
 
     var notchWidth: CGFloat {
@@ -467,5 +477,6 @@ class NotchSettings {
         self.browserServerEnabled = UserDefaults.standard.object(forKey: "browserServerEnabled") as? Bool ?? false
         let savedPort = UserDefaults.standard.integer(forKey: "browserServerPort")
         self.browserServerPort = savedPort > 0 ? UInt16(savedPort) : 7373
+        self.llmResyncEnabled = UserDefaults.standard.object(forKey: "llmResyncEnabled") as? Bool ?? false
     }
 }
