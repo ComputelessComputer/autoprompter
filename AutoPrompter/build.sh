@@ -1,15 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
-SCHEME="Textream"
+SCHEME="AutoPrompter"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD_DIR="$PROJECT_DIR/build/release"
-ARCHIVE_ARM="$BUILD_DIR/Textream-arm64.xcarchive"
-ARCHIVE_X86="$BUILD_DIR/Textream-x86_64.xcarchive"
-APP_NAME="Textream.app"
+ARCHIVE_ARM="$BUILD_DIR/AutoPrompter-arm64.xcarchive"
+ARCHIVE_X86="$BUILD_DIR/AutoPrompter-x86_64.xcarchive"
+APP_NAME="AutoPrompter.app"
 OUTPUT_DIR="$BUILD_DIR/universal"
 OUTPUT_APP="$OUTPUT_DIR/$APP_NAME"
-DMG_NAME="Textream.dmg"
+DMG_NAME="AutoPrompter.dmg"
 DMG_PATH="$BUILD_DIR/$DMG_NAME"
 
 echo "🧹 Cleaning previous build…"
@@ -18,7 +18,7 @@ mkdir -p "$BUILD_DIR" "$OUTPUT_DIR"
 
 echo "🔨 Building for Apple Silicon (arm64)…"
 xcodebuild archive \
-  -project "$PROJECT_DIR/Textream.xcodeproj" \
+  -project "$PROJECT_DIR/AutoPrompter.xcodeproj" \
   -scheme "$SCHEME" \
   -configuration Release \
   -archivePath "$ARCHIVE_ARM" \
@@ -31,7 +31,7 @@ xcodebuild archive \
 
 echo "🔨 Building for Intel (x86_64)…"
 xcodebuild archive \
-  -project "$PROJECT_DIR/Textream.xcodeproj" \
+  -project "$PROJECT_DIR/AutoPrompter.xcodeproj" \
   -scheme "$SCHEME" \
   -configuration Release \
   -archivePath "$ARCHIVE_X86" \
@@ -70,7 +70,7 @@ cp -R "$OUTPUT_APP" "$DMG_STAGING/"
 ln -s /Applications "$DMG_STAGING/Applications"
 
 hdiutil create \
-  -volname "Textream" \
+  -volname "AutoPrompter" \
   -srcfolder "$DMG_STAGING" \
   -ov \
   -format UDZO \
@@ -84,4 +84,4 @@ echo "✅ Done!"
 echo "   App:  $OUTPUT_APP"
 echo "   DMG:  $DMG_PATH"
 echo ""
-lipo -info "$OUTPUT_APP/Contents/MacOS/Textream"
+lipo -info "$OUTPUT_APP/Contents/MacOS/AutoPrompter"

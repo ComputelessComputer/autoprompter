@@ -1,6 +1,6 @@
 //
 //  ExternalDisplayController.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //

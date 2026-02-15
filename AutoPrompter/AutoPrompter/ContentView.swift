@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ContentView: View {
-    @ObservedObject private var service = TextreamService.shared
+    @ObservedObject private var service = AutoPrompterService.shared
     @State private var isRunning = false
     @State private var isDroppingPresentation = false
     @State private var dropError: String?
@@ -19,7 +19,7 @@ struct ContentView: View {
     @FocusState private var isTextFocused: Bool
 
     private let defaultText = """
-Welcome to Textream! This is your personal teleprompter that sits right below your MacBook's notch. [smile]
+Welcome to AutoPrompter! This is your personal teleprompter that sits right below your MacBook's notch. [smile]
 
 As you read aloud, the text will highlight in real-time, following your voice. The speech recognition matches your words and keeps track of your progress. [pause]
 
@@ -240,7 +240,7 @@ Happy presenting! [wave]
             if service.overlayController.isShowing {
                 isRunning = true
             }
-            if TextreamService.shared.launchedExternally {
+            if AutoPrompterService.shared.launchedExternally {
                 DispatchQueue.main.async {
                     for window in NSApp.windows where !(window is NSPanel) {
                         window.orderOut(nil)
@@ -407,7 +407,7 @@ struct AboutView: View {
 
             // App name & version
             VStack(spacing: 4) {
-                Text("Textream")
+                Text("AutoPrompter")
                     .font(.system(size: 20, weight: .bold))
                 Text("Version \(appVersion)")
                     .font(.system(size: 12))
@@ -423,7 +423,7 @@ struct AboutView: View {
 
             // Links
             HStack(spacing: 12) {
-                Link(destination: URL(string: "https://github.com/f/textream")!) {
+                Link(destination: URL(string: "https://github.com/ComputelessComputer/autoprompter")!) {
                     HStack(spacing: 5) {
                         Image(systemName: "chevron.left.forwardslash.chevron.right")
                             .font(.system(size: 11, weight: .semibold))

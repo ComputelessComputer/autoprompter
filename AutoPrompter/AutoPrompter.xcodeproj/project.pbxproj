@@ -7,15 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		446966B42F37E47300AF141F /* Textream.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Textream.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4E471242CDFAEE943E1322D /* DeepgramStreamer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepgramStreamer.swift; sourceTree = "<group>"; };
-		6888BA6E74C6ADDCD89DB08F /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		446966B42F37E47300AF141F /* AutoPrompter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoPrompter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		446966B62F37E47300AF141F /* Textream */ = {
+		446966B62F37E47300AF141F /* AutoPrompter */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Textream;
+			path = AutoPrompter;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -34,7 +32,7 @@
 		446966AB2F37E47300AF141F = {
 			isa = PBXGroup;
 			children = (
-				446966B62F37E47300AF141F /* Textream */,
+				446966B62F37E47300AF141F /* AutoPrompter */,
 				446966B52F37E47300AF141F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -42,7 +40,7 @@
 		446966B52F37E47300AF141F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				446966B42F37E47300AF141F /* Textream.app */,
+				446966B42F37E47300AF141F /* AutoPrompter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -50,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		446966B32F37E47300AF141F /* Textream */ = {
+		446966B32F37E47300AF141F /* AutoPrompter */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 446966C12F37E47400AF141F /* Build configuration list for PBXNativeTarget "Textream" */;
+			buildConfigurationList = 446966C12F37E47400AF141F /* Build configuration list for PBXNativeTarget "AutoPrompter" */;
 			buildPhases = (
 				446966B02F37E47300AF141F /* Sources */,
 				446966B12F37E47300AF141F /* Frameworks */,
@@ -63,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				446966B62F37E47300AF141F /* Textream */,
+				446966B62F37E47300AF141F /* AutoPrompter */,
 			);
-			name = Textream;
+			name = AutoPrompter;
 			packageProductDependencies = (
 			);
-			productName = Textream;
-			productReference = 446966B42F37E47300AF141F /* Textream.app */;
+			productName = AutoPrompter;
+			productReference = 446966B42F37E47300AF141F /* AutoPrompter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -87,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 446966AF2F37E47300AF141F /* Build configuration list for PBXProject "Textream" */;
+			buildConfigurationList = 446966AF2F37E47300AF141F /* Build configuration list for PBXProject "AutoPrompter" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -101,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				446966B32F37E47300AF141F /* Textream */,
+				446966B32F37E47300AF141F /* AutoPrompter */,
 			);
 		};
 /* End PBXProject section */
@@ -121,8 +119,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39B02A486E2B003D8264F531 /* DeepgramStreamer.swift in Sources */,
-				C3DC7A1CC6B9AFE3F5A035C4 /* KeychainStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,28 +253,28 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
-				CODE_SIGN_ENTITLEMENTS = Textream/Textream.entitlements;
+				CODE_SIGN_ENTITLEMENTS = AutoPrompter/AutoPrompter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = RJA7656U34;
+				DEVELOPMENT_TEAM = 6SLY7V277V;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Textream;
+				INFOPLIST_KEY_CFBundleDisplayName = AutoPrompter;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Textream needs microphone access to listen to your speech and highlight words as you read them.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Textream uses speech recognition to follow along as you read and highlight the current word.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "AutoPrompter needs microphone access to listen to your speech and highlight words as you read them.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "AutoPrompter uses speech recognition to follow along as you read and highlight the current word.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.fka.textream;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnjeong.autoprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -307,17 +303,17 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Textream;
+				INFOPLIST_KEY_CFBundleDisplayName = AutoPrompter;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Textream needs microphone access to listen to your speech and highlight words as you read them.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Textream uses speech recognition to follow along as you read and highlight the current word.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "AutoPrompter needs microphone access to listen to your speech and highlight words as you read them.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "AutoPrompter uses speech recognition to follow along as you read and highlight the current word.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.fka.textream;
+				PRODUCT_BUNDLE_IDENTIFIER = com.johnjeong.autoprompter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -332,7 +328,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		446966AF2F37E47300AF141F /* Build configuration list for PBXProject "Textream" */ = {
+		446966AF2F37E47300AF141F /* Build configuration list for PBXProject "AutoPrompter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				446966BF2F37E47400AF141F /* Debug */,
@@ -341,7 +337,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		446966C12F37E47400AF141F /* Build configuration list for PBXNativeTarget "Textream" */ = {
+		446966C12F37E47400AF141F /* Build configuration list for PBXNativeTarget "AutoPrompter" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				446966C22F37E47400AF141F /* Debug */,

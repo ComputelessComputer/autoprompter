@@ -1,6 +1,6 @@
 //
 //  NotchOverlayController.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -62,7 +62,7 @@ class NotchOverlayController: NSObject {
     func show(text: String, hasNextPage: Bool = false, onComplete: (() -> Void)? = nil) {
         self.onComplete = onComplete
         self.onNextPage = { [weak self] in
-            TextreamService.shared.advanceToNextPage()
+            AutoPrompterService.shared.advanceToNextPage()
         }
         self.isDismissing = false
         forceClose()
@@ -434,7 +434,7 @@ class NotchOverlayController: NSObject {
                 // Poll for page jump from page picker
                 if let targetIndex = self.overlayContent.jumpToPageIndex {
                     self.overlayContent.jumpToPageIndex = nil
-                    TextreamService.shared.jumpToPage(index: targetIndex)
+                    AutoPrompterService.shared.jumpToPage(index: targetIndex)
                 }
             }
             .store(in: &cancellables)

@@ -1,6 +1,6 @@
 //
-//  TextreamApp.swift
-//  Textream
+//  AutoPrompterApp.swift
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -22,24 +22,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             launchedByURL = false
         }
         if launchedByURL {
-            TextreamService.shared.launchedExternally = true
+            AutoPrompterService.shared.launchedExternally = true
             NSApp.setActivationPolicy(.accessory)
         }
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.servicesProvider = TextreamService.shared
+        NSApp.servicesProvider = AutoPrompterService.shared
         NSUpdateDynamicServices()
 
-        if TextreamService.shared.launchedExternally {
-            TextreamService.shared.hideMainWindow()
+        if AutoPrompterService.shared.launchedExternally {
+            AutoPrompterService.shared.hideMainWindow()
         }
 
         // Silent update check on launch
         UpdateChecker.shared.checkForUpdates(silent: true)
 
         // Start browser server if enabled
-        TextreamService.shared.updateBrowserServer()
+        AutoPrompterService.shared.updateBrowserServer()
 
         // Set window delegate to intercept close, disable tabs and fullscreen
         DispatchQueue.main.async {
@@ -71,8 +71,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        if TextreamService.shared.launchedExternally {
-            TextreamService.shared.launchedExternally = false
+        if AutoPrompterService.shared.launchedExternally {
+            AutoPrompterService.shared.launchedExternally = false
             NSApp.setActivationPolicy(.regular)
         }
         if !flag {
@@ -87,38 +87,38 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls {
-            if url.pathExtension == "textream" {
-                TextreamService.shared.openFileAtURL(url)
+            if url.pathExtension == "autoprompter" {
+                AutoPrompterService.shared.openFileAtURL(url)
                 // Show the main window for file opens
                 for window in NSApp.windows where !(window is NSPanel) {
                     window.makeKeyAndOrderFront(nil)
                 }
                 NSApp.activate(ignoringOtherApps: true)
             } else {
-                let wasExternal = TextreamService.shared.launchedExternally
-                TextreamService.shared.launchedExternally = true
+                let wasExternal = AutoPrompterService.shared.launchedExternally
+                AutoPrompterService.shared.launchedExternally = true
                 if !wasExternal {
                     NSApp.setActivationPolicy(.accessory)
                 }
-                TextreamService.shared.hideMainWindow()
-                TextreamService.shared.handleURL(url)
+                AutoPrompterService.shared.hideMainWindow()
+                AutoPrompterService.shared.handleURL(url)
             }
         }
     }
 }
 
 @main
-struct TextreamApp: App {
+struct AutoPrompterApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .onOpenURL { url in
-                    if url.pathExtension == "textream" {
-                        TextreamService.shared.openFileAtURL(url)
+                    if url.pathExtension == "autoprompter" {
+                        AutoPrompterService.shared.openFileAtURL(url)
                     } else {
-                        TextreamService.shared.handleURL(url)
+                        AutoPrompterService.shared.handleURL(url)
                     }
                 }
         }
@@ -143,26 +143,26 @@ struct TextreamApp: App {
             }
             CommandGroup(replacing: .newItem) {
                 Button("Open…") {
-                    TextreamService.shared.openFile()
+                    AutoPrompterService.shared.openFile()
                 }
                 .keyboardShortcut("o", modifiers: .command)
 
                 Divider()
 
                 Button("Save") {
-                    TextreamService.shared.saveFile()
+                    AutoPrompterService.shared.saveFile()
                 }
                 .keyboardShortcut("s", modifiers: .command)
 
                 Button("Save As…") {
-                    TextreamService.shared.saveFileAs()
+                    AutoPrompterService.shared.saveFileAs()
                 }
                 .keyboardShortcut("s", modifiers: [.command, .shift])
             }
             CommandGroup(replacing: .windowArrangement) { }
             CommandGroup(replacing: .help) {
                 Button("Textream Help") {
-                    if let url = URL(string: "https://github.com/f/textream") {
+                    if let url = URL(string: "https://github.com/ComputelessComputer/autoprompter") {
                         NSWorkspace.shared.open(url)
                     }
                 }

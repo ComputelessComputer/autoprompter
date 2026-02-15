@@ -1,6 +1,6 @@
 //
 //  PresentationNotesExtractor.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 9.02.2026.
 //

@@ -8,14 +8,14 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>Textream Document</string>
+			<string>AutoPrompter Document</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>dev.fka.textream.document</string>
+				<string>com.johnjeong.autoprompter.document</string>
 			</array>
 		</dict>
 	</array>
@@ -28,14 +28,14 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>Textream Document</string>
+			<string>AutoPrompter Document</string>
 			<key>UTTypeIdentifier</key>
-			<string>dev.fka.textream.document</string>
+			<string>com.johnjeong.autoprompter.document</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-					<string>textream</string>
+					<string>autoprompter</string>
 				</array>
 			</dict>
 		</dict>
@@ -44,10 +44,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>dev.fka.textream</string>
+			<string>com.johnjeong.autoprompter</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>textream</string>
+				<string>autoprompter</string>
 			</array>
 		</dict>
 	</array>
@@ -57,10 +57,10 @@
 			<key>NSMenuItem</key>
 			<dict>
 				<key>default</key>
-				<string>Read in Textream</string>
+				<string>Read in AutoPrompter</string>
 			</dict>
 			<key>NSMessage</key>
-			<string>readInTextream</string>
+			<string>readInAutoPrompter</string>
 			<key>NSPortName</key>
 			<string>Textream</string>
 			<key>NSSendTypes</key>

@@ -204,4 +204,4 @@ struct DeepgramWord: Decodable {
     let end: Double
 }
 
-// RecognizedWord not needed — Textream uses DeepgramWord directly.
+// RecognizedWord not needed — AutoPrompter uses DeepgramWord directly.

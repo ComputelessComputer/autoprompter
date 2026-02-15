@@ -1,6 +1,6 @@
 //
 //  UpdateChecker.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 9.02.2026.
 //
@@ -10,8 +10,8 @@ import AppKit
 class UpdateChecker {
     static let shared = UpdateChecker()
 
-    private let repoOwner = "f"
-    private let repoName = "textream"
+    private let repoOwner = "ComputelessComputer"
+    private let repoName = "autoprompter"
 
     private var currentVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
@@ -78,7 +78,7 @@ class UpdateChecker {
     private func showUpdateAvailable(latestVersion: String, releaseURL: String) {
         let alert = NSAlert()
         alert.messageText = "Update Available"
-        alert.informativeText = "Textream \(latestVersion) is available. You are currently running \(currentVersion)."
+        alert.informativeText = "AutoPrompter \(latestVersion) is available. You are currently running \(currentVersion)."
         alert.alertStyle = .informational
         alert.addButton(withTitle: "Download")
         alert.addButton(withTitle: "Later")
@@ -93,7 +93,7 @@ class UpdateChecker {
     private func showUpToDate() {
         let alert = NSAlert()
         alert.messageText = "You're Up to Date"
-        alert.informativeText = "Textream \(currentVersion) is the latest version."
+        alert.informativeText = "AutoPrompter \(currentVersion) is the latest version."
         alert.alertStyle = .informational
         alert.addButton(withTitle: "OK")
         alert.runModal()

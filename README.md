@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="Textream/Textream/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width="128" height="128" alt="Textream icon">
+  <img src="AutoPrompter/AutoPrompter/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width="128" height="128" alt="AutoPrompter icon">
 </p>
 
-<h1 align="center">Textream</h1>
+<h1 align="center">AutoPrompter</h1>
 
 <p align="center">
   <strong>A free macOS teleprompter with real-time word tracking, classic auto-scroll, and voice-activated scrolling.</strong>
@@ -17,35 +17,35 @@
 </p>
 
 <p align="center">
-  <img src="docs/video.gif" width="600" alt="Textream demo">
+  <img src="docs/video.gif" width="600" alt="AutoPrompter demo">
 </p>
 
 ---
 
-## What is Textream?
+## What is AutoPrompter?
 
-Textream is a free, open-source macOS app that guides you through your script with three modes: **word tracking** (highlights each word as you say it), **classic** (constant-speed auto-scroll), and **voice-activated** (scrolls while you speak, pauses when you're silent). It displays your text in a sleek **Dynamic Island-style overlay** at the top of your screen, a **draggable floating window**, or **fullscreen on a Sidecar iPad** — visible only to you, invisible to your audience.
+AutoPrompter is a free, open-source macOS app that guides you through your script with three modes: **word tracking** (highlights each word as you say it), **classic** (constant-speed auto-scroll), and **voice-activated** (scrolls while you speak, pauses when you're silent). It displays your text in a sleek **Dynamic Island-style overlay** at the top of your screen, a **draggable floating window**, or **fullscreen on a Sidecar iPad** — visible only to you, invisible to your audience.
 
 Paste your script, hit play, and start speaking. When you're done, the overlay closes automatically.
 
 ## Download
 
-**[Download the latest .dmg from Releases](https://github.com/f/textream/releases/latest)**
+**[Download the latest .dmg from Releases](https://github.com/ComputelessComputer/autoprompter/releases/latest)**
 
 Or install with Homebrew:
 
 ```bash
-brew install f/textream/textream
+brew install ComputelessComputer/autoprompter/autoprompter
 ```
 
 > Requires **macOS 15 Sequoia** or later. Works on Apple Silicon and Intel.
 
 ### First launch
 
-Since Textream is distributed outside the Mac App Store, macOS may block it on first open. Run this once in Terminal:
+Since AutoPrompter is distributed outside the Mac App Store, macOS may block it on first open. Run this once in Terminal:
 
 ```bash
-xattr -cr /Applications/Textream.app
+xattr -cr /Applications/AutoPrompter.app
 ```
 
 Then right-click the app → **Open**. After the first launch, macOS remembers your choice.
@@ -126,7 +126,7 @@ View your teleprompter on **any device** — phone, tablet, or another computer 
 ### File Support
 
 - **PowerPoint notes import** — Drop a .pptx file to extract presenter notes as pages. For Keynote or Google Slides, export to PowerPoint first.
-- **Save as .textream files** — Save your scripts as .textream files to reuse anytime. Keep your notes organized across presentations.
+- **Save as .autoprompter files** — Save your scripts as .autoprompter files to reuse anytime. Keep your notes organized across presentations.
 - **Multi-page support** — Navigate between pages with automatic advance. In follow-cursor mode, pages auto-advance with a 3-second countdown.
 
 ### Other
@@ -136,12 +136,12 @@ View your teleprompter on **any device** — phone, tablet, or another computer 
 - **Pause & resume** — Go off-script, take a break, come back. The tracker picks up where you left off.
 - **Mute / unmute** — Toggle the microphone on or off from the overlay in any mode.
 - **Completely private** — All processing happens on-device. No accounts, no tracking, no data leaves your Mac.
-- **Auto update checker** — Checks GitHub Releases for new versions on launch and from the Textream menu.
+- **Auto update checker** — Checks GitHub Releases for new versions on launch and from the AutoPrompter menu.
 - **Open source** — MIT licensed. Contributions welcome.
 
 ## Who it's for
 
-| Use case | How Textream helps |
+| Use case | How AutoPrompter helps |
 |---|---|
 | **Streamers** | Read sponsor segments, announcements, and talking points without looking away from the camera. |
 | **Interviewers** | Keep your questions visible while maintaining natural eye contact with your guest. |
@@ -165,9 +165,9 @@ View your teleprompter on **any device** — phone, tablet, or another computer 
 ### Build
 
 ```bash
-git clone https://github.com/f/textream.git
-cd textream/Textream
-open Textream.xcodeproj
+git clone https://github.com/ComputelessComputer/autoprompter.git
+cd autoprompter/AutoPrompter
+open AutoPrompter.xcodeproj
 ```
 
 Build and run with ⌘R in Xcode.
@@ -175,13 +175,13 @@ Build and run with ⌘R in Xcode.
 ### Project structure
 
 ```
-Textream/
-├── Textream.xcodeproj
+AutoPrompter/
+├── AutoPrompter.xcodeproj
 ├── Info.plist
-└── Textream/
-    ├── TextreamApp.swift              # App entry point, deep link handling
+└── AutoPrompter/
+    ├── AutoPrompterApp.swift              # App entry point, deep link handling
     ├── ContentView.swift              # Main text editor UI + About view
-    ├── TextreamService.swift          # Service layer, URL scheme handling
+    ├── AutoPrompterService.swift          # Service layer, URL scheme handling
     ├── SpeechRecognizer.swift         # On-device speech recognition engine
     ├── NotchOverlayController.swift   # Dynamic Island + floating overlay
     ├── ExternalDisplayController.swift # Sidecar / external display output
@@ -196,13 +196,13 @@ Textream/
 
 ## URL Scheme
 
-Textream supports the `textream://` URL scheme for launching directly into the overlay:
+AutoPrompter supports the `autoprompter://` URL scheme for launching directly into the overlay:
 
 ```
-textream://read?text=Hello%20world
+autoprompter://read?text=Hello%20world
 ```
 
-It also registers as a macOS Service, so you can select text in any app and send it to Textream via the Services menu.
+It also registers as a macOS Service, so you can select text in any app and send it to AutoPrompter via the Services menu.
 
 ## License
 

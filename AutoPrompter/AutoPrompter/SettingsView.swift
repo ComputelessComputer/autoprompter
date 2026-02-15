@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -1047,8 +1047,8 @@ struct SettingsView: View {
                                 Spacer()
 
                                 Button("Restart") {
-                                    TextreamService.shared.browserServer.stop()
-                                    TextreamService.shared.browserServer.start()
+                                    AutoPrompterService.shared.browserServer.stop()
+                                    AutoPrompterService.shared.browserServer.start()
                                     localIP = BrowserServer.localIPAddress() ?? "localhost"
                                 }
                                 .controlSize(.small)

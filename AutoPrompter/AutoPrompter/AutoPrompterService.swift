@@ -1,6 +1,6 @@
 //
-//  TextreamService.swift
-//  Textream
+//  AutoPrompterService.swift
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -10,8 +10,8 @@ import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 
-class TextreamService: NSObject, ObservableObject {
-    static let shared = TextreamService()
+class AutoPrompterService: NSObject, ObservableObject {
+    static let shared = AutoPrompterService()
     let overlayController = NotchOverlayController()
     let externalDisplayController = ExternalDisplayController()
     let browserServer = BrowserServer()
@@ -175,7 +175,7 @@ class TextreamService: NSObject, ObservableObject {
     func saveFileAs() {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.init(filenameExtension: "textream")!]
-        panel.nameFieldStringValue = "Untitled.textream"
+        panel.nameFieldStringValue = "Untitled.autoprompter"
         panel.canCreateDirectories = true
 
         panel.begin { [weak self] response in
@@ -311,7 +311,7 @@ class TextreamService: NSObject, ObservableObject {
     }
 
     // macOS Services handler
-    @objc func readInTextream(_ pboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
+    @objc func readInAutoPrompter(_ pboard: NSPasteboard, userData: String, error: AutoreleasingUnsafeMutablePointer<NSString?>) {
         guard let text = pboard.string(forType: .string) else {
             error.pointee = "No text found on pasteboard" as NSString
             return
@@ -321,7 +321,7 @@ class TextreamService: NSObject, ObservableObject {
 
     // URL scheme handler: textream://read?text=Hello%20World
     func handleURL(_ url: URL) {
-        guard url.scheme == "textream" else { return }
+        guard url.scheme == "autoprompter" else { return }
 
         if url.host == "read" || url.path == "/read" {
             if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),

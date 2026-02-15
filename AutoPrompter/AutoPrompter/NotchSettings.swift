@@ -1,6 +1,6 @@
 //
 //  NotchSettings.swift
-//  Textream
+//  AutoPrompter
 //
 //  Created by Fatih Kadir Akın on 8.02.2026.
 //
@@ -304,7 +304,7 @@ enum SpeechBackend: String, CaseIterable, Identifiable {
 class NotchSettings {
     static let shared = NotchSettings()
 
-    private let deepgramKeychain = KeychainStore(service: "Textream", account: "DeepgramAPIKey")
+    private let deepgramKeychain = KeychainStore(service: "AutoPrompter", account: "DeepgramAPIKey")
 
     var speechBackend: SpeechBackend {
         didSet { UserDefaults.standard.set(speechBackend.rawValue, forKey: "speechBackend") }
@@ -410,7 +410,7 @@ class NotchSettings {
     var browserServerEnabled: Bool {
         didSet {
             UserDefaults.standard.set(browserServerEnabled, forKey: "browserServerEnabled")
-            TextreamService.shared.updateBrowserServer()
+            AutoPrompterService.shared.updateBrowserServer()
         }
     }
 
