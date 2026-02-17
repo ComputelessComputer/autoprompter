@@ -43,4 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DMG_NAME="AutoPrompter-${GITHUB_REF_NAME}.dmg"
-          gh release upload "$GITHUB_REF_NAME" "$DMG_NAME" --clobber
+          gh release create "$GITHUB_REF_NAME" "$DMG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "AutoPrompter ${GITHUB_REF_NAME}" \
+            --generate-notes
