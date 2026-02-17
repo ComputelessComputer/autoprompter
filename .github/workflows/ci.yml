@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project AutoPrompter/AutoPrompter.xcodeproj \
+            -scheme AutoPrompter \
+            -configuration Debug \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet

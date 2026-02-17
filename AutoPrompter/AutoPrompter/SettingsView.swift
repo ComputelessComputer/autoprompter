@@ -645,7 +645,31 @@ struct SettingsView: View {
 
             Divider()
 
-            // LLM Resync
+            // OpenAI
+            Text("OpenAI")
+                .font(.system(size: 13, weight: .semibold))
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("API Key")
+                    .font(.system(size: 13, weight: .medium))
+                HStack(spacing: 8) {
+                    SecureField("Paste your OpenAI API key", text: Binding(
+                        get: { settings.openaiAPIKey },
+                        set: { settings.openaiAPIKey = $0 }
+                    ))
+                    .textFieldStyle(.roundedBorder)
+                    if !settings.openaiAPIKey.isEmpty {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    }
+                }
+                Text("Used for Smart Resync and script refinement.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                Link("Get an API key", destination: URL(string: "https://platform.openai.com/api-keys")!)
+                    .font(.system(size: 11))
+            }
+
             Toggle(isOn: $settings.llmResyncEnabled) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Smart Resync")
@@ -658,24 +682,19 @@ struct SettingsView: View {
             .toggleStyle(.switch)
             .controlSize(.small)
 
-            if settings.llmResyncEnabled {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("OpenAI API Key")
-                        .font(.system(size: 13, weight: .medium))
-                    HStack(spacing: 8) {
-                        SecureField("Paste your OpenAI API key", text: Binding(
-                            get: { settings.openaiAPIKey },
-                            set: { settings.openaiAPIKey = $0 }
-                        ))
-                        .textFieldStyle(.roundedBorder)
-                        if !settings.openaiAPIKey.isEmpty {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        }
-                    }
-                    Link("Get an API key", destination: URL(string: "https://platform.openai.com/api-keys")!)
-                        .font(.system(size: 11))
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Refinement Model")
+                    .font(.system(size: 13, weight: .medium))
+                Picker("", selection: $settings.refinementModel) {
+                    Text("GPT-4o").tag("gpt-4o")
+                    Text("GPT-4o Mini").tag("gpt-4o-mini")
+                    Text("GPT-5.2").tag("gpt-5.2")
                 }
+                .labelsHidden()
+                .frame(width: 160)
+                Text("Model used when refining drafts with AI.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
             }
 
             Divider()
@@ -1228,6 +1247,7 @@ struct SettingsView: View {
         settings.browserServerEnabled = false
         settings.browserServerPort = 7373
         settings.llmResyncEnabled = false
+        settings.refinementModel = "gpt-4o"
     }
 
     private func refreshScreens() {

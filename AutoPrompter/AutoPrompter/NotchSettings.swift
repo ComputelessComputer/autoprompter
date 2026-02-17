@@ -428,6 +428,10 @@ class NotchSettings {
         didSet { UserDefaults.standard.set(Int(browserServerPort), forKey: "browserServerPort") }
     }
 
+    var refinementModel: String {
+        didSet { UserDefaults.standard.set(refinementModel, forKey: "refinementModel") }
+    }
+
     var font: NSFont {
         fontFamilyPreset.font(size: fontSizePreset.pointSize)
     }
@@ -478,5 +482,6 @@ class NotchSettings {
         let savedPort = UserDefaults.standard.integer(forKey: "browserServerPort")
         self.browserServerPort = savedPort > 0 ? UInt16(savedPort) : 7373
         self.llmResyncEnabled = UserDefaults.standard.object(forKey: "llmResyncEnabled") as? Bool ?? false
+        self.refinementModel = UserDefaults.standard.string(forKey: "refinementModel") ?? "gpt-4o"
     }
 }

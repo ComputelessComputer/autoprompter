@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var dropAlertTitle: String = "Import Error"
     @State private var showSettings = false
     @State private var showAbout = false
+    @State private var showDraft = false
     @FocusState private var isTextFocused: Bool
 
     private let defaultText = """
@@ -180,6 +181,20 @@ Happy presenting! [wave]
                         .buttonStyle(.plain)
                     }
 
+                    // Draft button
+                    Button {
+                        showDraft = true
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: "mic.badge.plus")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Draft")
+                                .font(.system(size: 11, weight: .medium))
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+
                     // Add page button in toolbar
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -213,6 +228,15 @@ Happy presenting! [wave]
                     }
                     .buttonStyle(.plain)
                 }
+            }
+        }
+        .sheet(isPresented: $showDraft) {
+            DraftSessionView { script in
+                let trimmed = script.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return }
+                service.pages = [trimmed]
+                service.currentPageIndex = 0
+                service.savedPages = service.pages
             }
         }
         .sheet(isPresented: $showSettings) {
