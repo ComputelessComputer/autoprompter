@@ -49,12 +49,18 @@ jobs:
           APP_PATH="build/Build/Products/Release/AutoPrompter.app"
           ENTITLEMENTS="AutoPrompter/AutoPrompter/AutoPrompter.entitlements"
 
-          codesign --force --options runtime --timestamp \
-            --sign "$APPLE_SIGNING_IDENTITY" \
+          echo "Available identities:"
+          security find-identity -v -p codesigning
+
+          /usr/bin/codesign --force --sign "$APPLE_SIGNING_IDENTITY" \
             --entitlements "$ENTITLEMENTS" \
+            --options runtime \
+            --timestamp \
+            --deep \
+            --verbose \
             "$APP_PATH"
 
-          codesign --verify --verbose "$APP_PATH"
+          codesign --verify --verbose=4 "$APP_PATH"
 
       - name: Notarize app
         env:
