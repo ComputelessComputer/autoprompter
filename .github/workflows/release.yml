@@ -32,9 +32,6 @@ jobs:
           security list-keychain -d user -s $KEYCHAIN_PATH
 
       - name: Build
-        env:
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           xcodebuild build \
             -project AutoPrompter/AutoPrompter.xcodeproj \
@@ -42,13 +39,22 @@ jobs:
             -configuration Release \
             -derivedDataPath build \
             -destination "platform=macOS" \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="$APPLE_SIGNING_IDENTITY" \
-            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            ENABLE_HARDENED_RUNTIME=YES \
-            CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
-            OTHER_CODE_SIGN_FLAGS="--timestamp" \
+            CODE_SIGNING_ALLOWED=NO \
             -quiet
+
+      - name: Sign app
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          APP_PATH="build/Build/Products/Release/AutoPrompter.app"
+          ENTITLEMENTS="AutoPrompter/AutoPrompter/AutoPrompter.entitlements"
+
+          codesign --force --options runtime --timestamp \
+            --sign "$APPLE_SIGNING_IDENTITY" \
+            --entitlements "$ENTITLEMENTS" \
+            "$APP_PATH"
+
+          codesign --verify --verbose "$APP_PATH"
 
       - name: Notarize app
         env:
