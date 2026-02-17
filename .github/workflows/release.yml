@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project AutoPrompter/AutoPrompter.xcodeproj \
+            -scheme AutoPrompter \
+            -configuration Release \
+            -derivedDataPath build \
+            -destination "platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
+
+      - name: Create DMG
+        run: |
+          APP_PATH="build/Build/Products/Release/AutoPrompter.app"
+          DMG_NAME="AutoPrompter-${GITHUB_REF_NAME}.dmg"
+
+          mkdir -p dmg-staging
+          cp -R "$APP_PATH" dmg-staging/
+          ln -s /Applications dmg-staging/Applications
+
+          hdiutil create -volname "AutoPrompter" \
+            -srcfolder dmg-staging \
+            -ov -format UDZO \
+            "$DMG_NAME"
+
+      - name: Upload to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DMG_NAME="AutoPrompter-${GITHUB_REF_NAME}.dmg"
+          gh release upload "$GITHUB_REF_NAME" "$DMG_NAME" --clobber
