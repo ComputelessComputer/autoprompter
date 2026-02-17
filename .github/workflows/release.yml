@@ -45,8 +45,6 @@ jobs:
 
       - name: Sign app
         shell: bash
-        env:
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
         run: |
           APP_PATH="build/Build/Products/Release/AutoPrompter.app"
           ENTITLEMENTS="AutoPrompter/AutoPrompter/AutoPrompter.entitlements"
@@ -54,7 +52,11 @@ jobs:
           echo "Available identities:"
           security find-identity -v -p codesigning
 
-          /usr/bin/codesign --force --sign "$APPLE_SIGNING_IDENTITY" \
+          # Extract the first Developer ID Application identity
+          IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.*)"$/\1/')
+          echo "Using identity: $IDENTITY"
+
+          /usr/bin/codesign --force --sign "$IDENTITY" \
             --entitlements "$ENTITLEMENTS" \
             --options runtime \
             --timestamp \
