@@ -1,5 +1,7 @@
 # AutoPrompter
 
+![video](https://github.com/user-attachments/assets/64a3ae53-4708-4700-993a-71da0830a28b)
+
 A free macOS teleprompter app that highlights your script in real-time as you speak. Built for streamers, interviewers, presenters, and podcasters.
 
 AutoPrompter displays your text in a Dynamic Island-style overlay at the top of your screen, a draggable floating window, or fullscreen on a Sidecar iPad — visible only to you, invisible to your audience.
