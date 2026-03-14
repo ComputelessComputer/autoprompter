@@ -10,6 +10,9 @@ jobs:
     runs-on: macos-15
     permissions:
       contents: write
+    env:
+      APP_NAME: AutoPrompter.app
+      ENTITLEMENTS: AutoPrompter/AutoPrompter/AutoPrompter.entitlements
     steps:
       - uses: actions/checkout@v4
 
@@ -32,31 +35,78 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
-      - name: Build
+      - name: Resolve signing identity
+        shell: bash
         run: |
-          xcodebuild build \
+          IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.*)"$/\1/')
+
+          if [ -z "$IDENTITY" ]; then
+            echo "Developer ID Application identity not found"
+            exit 1
+          fi
+
+          echo "SIGNING_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Build universal app
+        shell: bash
+        run: |
+          BUILD_ROOT="$RUNNER_TEMP/build"
+          ARCHIVE_ARM="$BUILD_ROOT/AutoPrompter-arm64.xcarchive"
+          ARCHIVE_X86="$BUILD_ROOT/AutoPrompter-x86_64.xcarchive"
+          UNIVERSAL_DIR="$RUNNER_TEMP/universal"
+          APP_PATH="$UNIVERSAL_DIR/$APP_NAME"
+          ARM_APP="$ARCHIVE_ARM/Products/Applications/$APP_NAME"
+          X86_APP="$ARCHIVE_X86/Products/Applications/$APP_NAME"
+
+          mkdir -p "$BUILD_ROOT" "$UNIVERSAL_DIR"
+
+          xcodebuild archive \
             -project AutoPrompter/AutoPrompter.xcodeproj \
             -scheme AutoPrompter \
             -configuration Release \
-            -derivedDataPath build \
-            -destination "platform=macOS" \
+            -archivePath "$ARCHIVE_ARM" \
+            -destination "generic/platform=macOS" \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            SKIP_INSTALL=NO \
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
             CODE_SIGNING_ALLOWED=NO \
             -quiet
+
+          xcodebuild archive \
+            -project AutoPrompter/AutoPrompter.xcodeproj \
+            -scheme AutoPrompter \
+            -configuration Release \
+            -archivePath "$ARCHIVE_X86" \
+            -destination "generic/platform=macOS" \
+            ARCHS=x86_64 \
+            ONLY_ACTIVE_ARCH=NO \
+            SKIP_INSTALL=NO \
+            BUILD_LIBRARY_FOR_DISTRIBUTION=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            -quiet
+
+          cp -R "$ARM_APP" "$APP_PATH"
+
+          find "$ARM_APP" -type f | while read -r ARM_FILE; do
+            RELATIVE_PATH="${ARM_FILE#$ARM_APP}"
+            X86_FILE="$X86_APP$RELATIVE_PATH"
+            OUTPUT_FILE="$APP_PATH$RELATIVE_PATH"
+
+            if [ -f "$X86_FILE" ] && file "$ARM_FILE" | grep -q "Mach-O"; then
+              lipo -create "$ARM_FILE" "$X86_FILE" -output "$OUTPUT_FILE"
+            fi
+          done
+
+          echo "APP_PATH=$APP_PATH" >> "$GITHUB_ENV"
+          echo "DMG_PATH=$RUNNER_TEMP/AutoPrompter-${GITHUB_REF_NAME}.dmg" >> "$GITHUB_ENV"
+
+          lipo -info "$APP_PATH/Contents/MacOS/AutoPrompter"
 
       - name: Sign app
         shell: bash
         run: |
-          APP_PATH="build/Build/Products/Release/AutoPrompter.app"
-          ENTITLEMENTS="AutoPrompter/AutoPrompter/AutoPrompter.entitlements"
-
-          echo "Available identities:"
-          security find-identity -v -p codesigning
-
-          # Extract the first Developer ID Application identity
-          IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.*)"$/\1/')
-          echo "Using identity: $IDENTITY"
-
-          /usr/bin/codesign --force --sign "$IDENTITY" \
+          /usr/bin/codesign --force --sign "$SIGNING_IDENTITY" \
             --entitlements "$ENTITLEMENTS" \
             --options runtime \
             --timestamp \
@@ -64,7 +114,7 @@ jobs:
             --verbose \
             "$APP_PATH"
 
-          codesign --verify --verbose=4 "$APP_PATH"
+          codesign --verify --strict --deep --verbose=4 "$APP_PATH"
 
       - name: Notarize app
         shell: bash
@@ -73,7 +123,6 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          APP_PATH="build/Build/Products/Release/AutoPrompter.app"
           ZIP_PATH=$RUNNER_TEMP/AutoPrompter.zip
 
           ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
@@ -97,29 +146,65 @@ jobs:
           fi
 
           xcrun stapler staple "$APP_PATH"
+          spctl -a -vv -t exec "$APP_PATH"
 
       - name: Create DMG
         shell: bash
         run: |
-          APP_PATH="build/Build/Products/Release/AutoPrompter.app"
-          DMG_NAME="AutoPrompter-${GITHUB_REF_NAME}.dmg"
+          DMG_STAGING=$(mktemp -d)
 
-          mkdir -p dmg-staging
-          cp -R "$APP_PATH" dmg-staging/
-          ln -s /Applications dmg-staging/Applications
+          cp -R "$APP_PATH" "$DMG_STAGING/"
+          ln -s /Applications "$DMG_STAGING/Applications"
 
           hdiutil create -volname "AutoPrompter" \
-            -srcfolder dmg-staging \
+            -srcfolder "$DMG_STAGING" \
             -ov -format UDZO \
-            "$DMG_NAME"
+            "$DMG_PATH"
+
+      - name: Sign and notarize DMG
+        shell: bash
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          /usr/bin/codesign --force --sign "$SIGNING_IDENTITY" \
+            --timestamp \
+            "$DMG_PATH"
+
+          SUBMIT_OUTPUT=$(xcrun notarytool submit "$DMG_PATH" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait 2>&1)
+          echo "$SUBMIT_OUTPUT"
+
+          SUBMISSION_ID=$(echo "$SUBMIT_OUTPUT" | grep 'id:' | head -1 | awk '{print $2}')
+
+          if echo "$SUBMIT_OUTPUT" | grep -q "status: Invalid"; then
+            echo "Notarization failed. Fetching log..."
+            xcrun notarytool log "$SUBMISSION_ID" \
+              --apple-id "$APPLE_ID" \
+              --password "$APPLE_PASSWORD" \
+              --team-id "$APPLE_TEAM_ID"
+            exit 1
+          fi
+
+          xcrun stapler staple "$DMG_PATH"
+          spctl -a -vv -t open "$DMG_PATH"
 
       - name: Upload to release
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DMG_NAME="AutoPrompter-${GITHUB_REF_NAME}.dmg"
-          gh release create "$GITHUB_REF_NAME" "$DMG_NAME" \
-            --repo "$GITHUB_REPOSITORY" \
-            --title "AutoPrompter ${GITHUB_REF_NAME}" \
-            --generate-notes
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$DMG_PATH" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$DMG_PATH" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "AutoPrompter ${GITHUB_REF_NAME}" \
+              --generate-notes
+          fi
