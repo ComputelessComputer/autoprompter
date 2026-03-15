@@ -191,7 +191,8 @@ jobs:
           fi
 
           xcrun stapler staple "$DMG_PATH"
-          spctl -a -vv -t open "$DMG_PATH"
+          xcrun stapler validate "$DMG_PATH"
+          codesign --verify --verbose=4 "$DMG_PATH"
 
       - name: Upload to release
         shell: bash
