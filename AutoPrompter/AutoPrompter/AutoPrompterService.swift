@@ -174,7 +174,7 @@ class AutoPrompterService: NSObject, ObservableObject {
 
     func saveFileAs() {
         let panel = NSSavePanel()
-        panel.allowedContentTypes = [.init(filenameExtension: "textream")!]
+        panel.allowedContentTypes = [.init(filenameExtension: "autoprompter")!]
         panel.nameFieldStringValue = "Untitled.autoprompter"
         panel.canCreateDirectories = true
 
@@ -208,7 +208,7 @@ class AutoPrompterService: NSObject, ObservableObject {
 
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [
-            .init(filenameExtension: "textream")!,
+            .init(filenameExtension: "autoprompter")!,
             .init(filenameExtension: "key")!,
             .init(filenameExtension: "pptx")!,
         ]
@@ -319,7 +319,7 @@ class AutoPrompterService: NSObject, ObservableObject {
         readText(text)
     }
 
-    // URL scheme handler: textream://read?text=Hello%20World
+    // URL scheme handler: autoprompter://read?text=Hello%20World
     func handleURL(_ url: URL) {
         guard url.scheme == "autoprompter" else { return }
 

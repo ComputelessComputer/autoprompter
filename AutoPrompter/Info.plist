@@ -62,7 +62,7 @@
 			<key>NSMessage</key>
 			<string>readInAutoPrompter</string>
 			<key>NSPortName</key>
-			<string>Textream</string>
+			<string>AutoPrompter</string>
 			<key>NSSendTypes</key>
 			<array>
 				<string>public.utf8-plain-text</string>

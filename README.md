@@ -21,7 +21,3 @@ AutoPrompter displays your text in a Dynamic Island-style overlay at the top of 
 
 - macOS 15 Sequoia or later
 - Apple Silicon or Intel
-
-## Acknowledgements
-
-Forked from [f/textream](https://github.com/f/textream) by [Fatih Kadir Akın](https://fka.dev).

@@ -127,7 +127,7 @@ struct AutoPrompterApp: App {
 
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button("About Textream") {
+                Button("About AutoPrompter") {
                     NotificationCenter.default.post(name: .openAbout, object: nil)
                 }
                 Divider()
@@ -161,7 +161,7 @@ struct AutoPrompterApp: App {
             }
             CommandGroup(replacing: .windowArrangement) { }
             CommandGroup(replacing: .help) {
-                Button("Textream Help") {
+                Button("AutoPrompter Help") {
                     if let url = URL(string: "https://github.com/ComputelessComputer/autoprompter") {
                         NSWorkspace.shared.open(url)
                     }

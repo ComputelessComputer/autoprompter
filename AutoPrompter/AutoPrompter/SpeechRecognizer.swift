@@ -46,9 +46,11 @@ struct AudioInputDevice: Identifiable, Hashable {
                 mScope: kAudioObjectPropertyScopeGlobal,
                 mElement: kAudioObjectPropertyElementMain
             )
-            var uid: CFString = "" as CFString
-            var uidSize = UInt32(MemoryLayout<CFString>.size)
-            guard AudioObjectGetPropertyData(deviceID, &uidAddress, 0, nil, &uidSize, &uid) == noErr else { continue }
+            var uid: Unmanaged<CFString>?
+            var uidSize = UInt32(MemoryLayout<Unmanaged<CFString>?>.size)
+            guard AudioObjectGetPropertyData(deviceID, &uidAddress, 0, nil, &uidSize, &uid) == noErr,
+                  let uid
+            else { continue }
 
             // Get name
             var nameAddress = AudioObjectPropertyAddress(
@@ -56,11 +58,19 @@ struct AudioInputDevice: Identifiable, Hashable {
                 mScope: kAudioObjectPropertyScopeGlobal,
                 mElement: kAudioObjectPropertyElementMain
             )
-            var name: CFString = "" as CFString
-            var nameSize = UInt32(MemoryLayout<CFString>.size)
-            guard AudioObjectGetPropertyData(deviceID, &nameAddress, 0, nil, &nameSize, &name) == noErr else { continue }
+            var name: Unmanaged<CFString>?
+            var nameSize = UInt32(MemoryLayout<Unmanaged<CFString>?>.size)
+            guard AudioObjectGetPropertyData(deviceID, &nameAddress, 0, nil, &nameSize, &name) == noErr,
+                  let name
+            else { continue }
 
-            result.append(AudioInputDevice(id: deviceID, uid: uid as String, name: name as String))
+            result.append(
+                AudioInputDevice(
+                    id: deviceID,
+                    uid: uid.takeUnretainedValue() as String,
+                    name: name.takeUnretainedValue() as String
+                )
+            )
         }
         return result
     }
@@ -157,7 +167,7 @@ class SpeechRecognizer {
         // Apple backend: check microphone permission first
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .denied, .restricted:
-            error = "Microphone access denied. Open System Settings → Privacy & Security → Microphone to allow Textream."
+            error = "Microphone access denied. Open System Settings → Privacy & Security → Microphone to allow AutoPrompter."
             openMicrophoneSettings()
             return
         case .notDetermined:
@@ -166,7 +176,7 @@ class SpeechRecognizer {
                     if granted {
                         self?.requestSpeechAuthAndBegin()
                     } else {
-                        self?.error = "Microphone access denied. Open System Settings → Privacy & Security → Microphone to allow Textream."
+                        self?.error = "Microphone access denied. Open System Settings → Privacy & Security → Microphone to allow AutoPrompter."
                     }
                 }
             }
@@ -187,7 +197,7 @@ class SpeechRecognizer {
                 case .authorized:
                     self?.beginRecognition()
                 default:
-                    self?.error = "Speech recognition not authorized. Open System Settings → Privacy & Security → Speech Recognition to allow Textream."
+                    self?.error = "Speech recognition not authorized. Open System Settings → Privacy & Security → Speech Recognition to allow AutoPrompter."
                     self?.openSpeechRecognitionSettings()
                 }
             }
